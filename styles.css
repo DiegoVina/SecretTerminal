@@ -1,0 +1,123 @@
+:root {
+    --text-color: #33ff33;
+    --bg-color: #000;
+    --terminal-width: 60rem;
+    --terminal-padding: 1.25rem;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Courier New', monospace;
+}
+
+body {
+    background-color: #121212;
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 1rem;
+}
+
+#terminal {
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+    max-width: var(--terminal-width);
+    height: 80vh;
+    background-color: var(--bg-color);
+    padding: var(--terminal-padding);
+    border-radius: 0.3125rem;
+    box-shadow: 0 0 0.9375rem rgba(0, 255, 0, 0.3);
+    overflow: hidden;
+}
+
+#output {
+    min-height: 18.75rem;
+    overflow-y: auto;
+    margin-bottom: 0.625rem;
+    font-size: 1rem;
+    flex-grow: 1;
+}
+
+#input-line {
+    display: flex;
+    align-items: center;
+    padding-top: 0.5rem;
+}
+
+.prompt {
+    color: var(--text-color);
+    margin-right: 0.3125rem;
+    font-size: 1rem;
+}
+
+#command-input {
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    outline: none;
+    width: 100%;
+    font-size: 1rem;
+    caret-color: white;
+}
+
+.section-content {
+    display: none;
+    background: #111;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 48em) {
+    #terminal {
+        width: 95%;
+        padding: 1rem;
+    }
+
+    #output {
+        min-height: 12.5rem;
+    }
+
+    #command-input {
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 30em) {
+    #terminal {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+    }
+
+    #output {
+        min-height: 9.375rem; 
+        font-size: 0.875rem;
+    }
+
+    .prompt {
+        font-size: 0.875rem;
+    }
+
+    #command-input {
+        font-size: 0.8125rem;
+    }
+}
