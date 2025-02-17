@@ -5,7 +5,7 @@ class Terminal {
     private historyIndex: number = -1;
     private maxLines: number = 10;
     private introMessage: string = "Terminal secreta sobre JOHN DOE. Escriba 'ayuda' para obtener la lista de comandos.";
-    private introElement: HTMLDivElement | null = null; // Se usará para conservar el mensaje inicial
+    private introElement: HTMLDivElement | null = null;
 
     constructor() {
         this.output = document.getElementById("output")!;
@@ -17,7 +17,7 @@ class Terminal {
         }
 
         this.input.addEventListener("keydown", (e) => this.handleInput(e));
-        this.renderIntro(); // Se asegura de que el mensaje inicial esté presente
+        this.render();
     }
 
     private handleInput(e: KeyboardEvent) {
@@ -81,15 +81,15 @@ class Terminal {
     }
 
     private clearOutput() {
-        this.output.innerHTML = ""; // Se borra todo menos el mensaje inicial
-        this.renderIntro(); // Se vuelve a agregar el mensaje inicial sin la animación
+        this.output.innerHTML = "";
+        this.render();
     }
 
     private paginate() {
         const lines = Array.from(this.output.children);
         while (lines.length > this.maxLines) {
             if (lines[0] === this.introElement) {
-                lines.shift(); // Evita borrar el mensaje inicial
+                lines.shift();
             }
             this.output.removeChild(lines[0]);
             lines.shift();
@@ -100,14 +100,21 @@ class Terminal {
         this.output.scrollTop = this.output.scrollHeight;
     }
 
-    private renderIntro() {
+    private render() {
         if (!this.introElement) {
             this.introElement = document.createElement("div");
-            this.introElement.classList.add("intro-message");
+
+            // Si es la primera vez, aplicar la animación
+            if (!sessionStorage.getItem("hasShownIntro")) {
+                this.introElement.classList.add("typewriter");
+                sessionStorage.setItem("hasShownIntro", "true");
+            }
+
             const introMessage = document.createElement("p");
             introMessage.textContent = this.introMessage;
             this.introElement.appendChild(introMessage);
         }
+
         this.output.appendChild(this.introElement);
     }
 }
