@@ -4,18 +4,20 @@ class Terminal {
     private history: string[] = [];
     private historyIndex: number = -1;
     private maxLines: number = 10;
+    private introMessage: string = "Terminal secreta sobre JOHN DOE. Escriba 'ayuda' para obtener la lista de comandos.";
+    private introElement: HTMLDivElement | null = null; // Se usará para conservar el mensaje inicial
 
     constructor() {
         this.output = document.getElementById("output")!;
         this.input = document.getElementById("command-input")! as HTMLInputElement;
 
         if (!this.output || !this.input) {
-            console.error("❌ ERROR: No se encontraron elementos necesarios en el DOM");
+            console.error("ERROR: No se encontraron elementos necesarios en el DOM");
             return;
         }
 
         this.input.addEventListener("keydown", (e) => this.handleInput(e));
-        this.render();
+        this.renderIntro(); // Se asegura de que el mensaje inicial esté presente
     }
 
     private handleInput(e: KeyboardEvent) {
@@ -46,47 +48,68 @@ class Terminal {
     }
 
     private processCommand(command: string) {
-        this.addToOutput(`$ ${command}`);
-    
-        // Verificamos qué elementos están dentro del output antes de buscar
-        console.log("Contenido de output:", this.output.innerHTML);
-    
-        const section = this.output.querySelector(`#${command}`) as HTMLElement | null;
-    
+        const commandElement = this.addToOutput(`$ ${command}`);
+
+        if (command === "clear") {
+            this.clearOutput();
+            return;
+        }
+
+        const section = document.getElementById(command) as HTMLElement | null;
+
         if (section) {
-            console.log(`Se encontró la sección: #${command}`);
-            this.showSection(section);
+            this.showSection(section, commandElement);
         } else {
-            console.log(`❌ No se encontró la sección: #${command}`);
             this.addToOutput("Comando no encontrado. Escriba 'ayuda' para obtener la lista completa de comandos.");
         }
+
+        this.paginate();
+        this.scrollToBottom();
+    }
+
+    private showSection(section: HTMLElement, commandElement: HTMLElement) {
+        section.classList.add("active");
+        commandElement.insertAdjacentElement("afterend", section);
         this.paginate();
     }
 
-    private showSection(section: HTMLElement) {
-        document.querySelectorAll(".section-content").forEach(el => el.classList.remove("active")); // Desactiva las secciones activas
-        section.classList.add("active"); // Activa la nueva sección
-    }
-
-    private addToOutput(text: string) {
+    private addToOutput(text: string): HTMLElement {
         const line = document.createElement("p");
         line.textContent = text;
         this.output.appendChild(line);
+        return line;
+    }
+
+    private clearOutput() {
+        this.output.innerHTML = ""; // Se borra todo menos el mensaje inicial
+        this.renderIntro(); // Se vuelve a agregar el mensaje inicial sin la animación
     }
 
     private paginate() {
-        const lines = this.output.querySelectorAll("p");
-        if (lines.length > this.maxLines) {
+        const lines = Array.from(this.output.children);
+        while (lines.length > this.maxLines) {
+            if (lines[0] === this.introElement) {
+                lines.shift(); // Evita borrar el mensaje inicial
+            }
             this.output.removeChild(lines[0]);
+            lines.shift();
         }
     }
 
-    private render() {
-        const introMessage = document.createElement("p");
-        introMessage.textContent = "Terminal secreta sobre el agente JOHN DOE. Escriba 'ayuda' para obtener la lista completa de comandos.";
-        this.output.prepend(introMessage); // Agrega el mensaje al inicio sin borrar nada
+    private scrollToBottom() {
+        this.output.scrollTop = this.output.scrollHeight;
     }
-    
+
+    private renderIntro() {
+        if (!this.introElement) {
+            this.introElement = document.createElement("div");
+            this.introElement.classList.add("intro-message");
+            const introMessage = document.createElement("p");
+            introMessage.textContent = this.introMessage;
+            this.introElement.appendChild(introMessage);
+        }
+        this.output.appendChild(this.introElement);
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => new Terminal());
