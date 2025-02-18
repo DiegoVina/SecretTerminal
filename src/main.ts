@@ -4,7 +4,7 @@ class Terminal {
     private history: string[] = [];
     private historyIndex: number = -1;
     private maxLines: number = 10;
-    private introMessage: string = "Terminal secreta sobre JOHN DOE. Escriba 'ayuda' para obtener la lista de comandos.";
+    private introMessage: string = "Terminal secreta sobre DIEGO VIÑA. Escriba 'ayuda' para obtener la lista de comandos.";
     private introElement: HTMLDivElement | null = null;
 
     constructor() {
